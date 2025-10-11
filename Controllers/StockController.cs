@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Stock_Social_Platform.Data;
+using Stock_Social_Platform.Dtos.Stock;
 using Stock_Social_Platform.Mappers;
 
 namespace Stock_Social_Platform.Controllers
@@ -37,6 +38,18 @@ namespace Stock_Social_Platform.Controllers
             }
 
             return Ok(stock.ToStockDto());
+        }
+
+
+        [HttpPost]
+        public IActionResult Create([FromBody] CreateStockRequestDto stockDto)
+        {
+            var stockModel = stockDto.ToStockFromCreateDTO();
+            _context.Stock.Add(stockModel);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(GetById), new { Id = stockModel.Id }, stockModel.ToStockDto());
+
         }
     }
 }
