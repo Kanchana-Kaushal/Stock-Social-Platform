@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Stock_Social_Platform.Dtos.Stock
 {
-    public class CreateStockRequestDto
+    public class UpdateStockRequestDto
     {
         public string Symbol { get; set; } = string.Empty;
 
