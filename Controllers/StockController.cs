@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Stock_Social_Platform.Data;
+using Stock_Social_Platform.Mappers;
 
 namespace Stock_Social_Platform.Controllers
 {
@@ -20,7 +21,7 @@ namespace Stock_Social_Platform.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var stocks = _context.Stock.ToList();
+            var stocks = _context.Stock.ToList().Select(s => s.ToStockDto());
             return Ok(stocks);
         }
 
@@ -35,7 +36,7 @@ namespace Stock_Social_Platform.Controllers
                 return NotFound("Cannot find the stock");
             }
 
-            return Ok(stock);
+            return Ok(stock.ToStockDto());
         }
     }
 }
