@@ -1,0 +1,41 @@
+# Build outputs
+bin/
+obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Rider IDE
+.idea/
+
+# Visual Studio Code
+.vscode/
+
+# NuGet packages
+*.nupkg
+packages/
+# If using package restore (usually yes), you can ignore packages/
+# Otherwise, include packages/
+
+# ASP.NET Core secret storage
+secrets.json
+appsettings.*.json    # optional if you have environment-specific configs with secrets
+
+# Logs
+*.log
+logs/
+
+# Publish outputs
+publish/
+wwwroot/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# dotnet tool cache
+*.dotnet/
