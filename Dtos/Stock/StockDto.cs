@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
+using Stock_Social_Platform.Dtos.Stock.Comment;
 
 namespace Stock_Social_Platform.Dtos.Stock
 {
@@ -21,5 +22,8 @@ namespace Stock_Social_Platform.Dtos.Stock
         public string Industry { get; set; } = string.Empty;
 
         public long MarketCap { get; set; }
+
+        public List<CommentDto> Comments { get; set; } = [];
+
     }
 }
