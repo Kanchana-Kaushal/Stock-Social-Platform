@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Stock_Social_Platform.Dtos.Comment;
 using Stock_Social_Platform.Interfaces;
 using Stock_Social_Platform.Mappers;
+using Stock_Social_Platform.Models;
 
 namespace Stock_Social_Platform.Controllers
 {
@@ -13,10 +15,12 @@ namespace Stock_Social_Platform.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly ICommentRepository _commentRepo;
+        private readonly IStockRepository _stockRepo;
 
-        public CommentsController(ICommentRepository commentRepo)
+        public CommentsController(ICommentRepository commentRepo, IStockRepository stockRepo)
         {
             _commentRepo = commentRepo;
+            _stockRepo = stockRepo;
         }
 
         [HttpGet]
@@ -38,6 +42,22 @@ namespace Stock_Social_Platform.Controllers
             }
 
             return Ok(comment.ToCommentDto());
+        }
+
+        [HttpPost("{stockId}")]
+        public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentDto commentDto)
+        {
+            if (!await _stockRepo.StockExists(stockId))
+            {
+                return BadRequest("Stock does not exists");
+            }
+
+            var commentModel = commentDto.ToCommentFromCreateDto(stockId);
+            var savedComment = await _commentRepo.CreateAsync(commentModel);
+
+
+            return CreatedAtAction(nameof(GetById), new { id = savedComment.Id }, savedComment.ToCommentDto());
+
         }
         
         

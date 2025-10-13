@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Stock_Social_Platform.Dtos.Comment;
 using Stock_Social_Platform.Dtos.Stock.Comment;
 using Stock_Social_Platform.Models;
 
@@ -18,6 +19,16 @@ namespace Stock_Social_Platform.Mappers
                 StockId = commentModel.StockId,
                 Content = commentModel.Content,
                 CreatedOn = commentModel.CreatedOn
+            };
+        }
+
+        public static Comment ToCommentFromCreateDto(this CreateCommentDto commentDto, int stockId)
+        {
+            return new Comment
+            {
+                StockId = stockId,
+                Title = commentDto.Title,
+                Content = commentDto.Content
             };
         }
     }

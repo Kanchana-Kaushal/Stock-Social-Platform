@@ -51,6 +51,11 @@ namespace Stock_Social_Platform.Repository
             return await _context.Stock.Include(c => c.Comments).ToListAsync();
         }
 
+        public async Task<bool> StockExists(int id)
+        {
+            return await _context.Stock.AnyAsync(s => s.Id == id);
+        }
+
         public async Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto updateDto)
         {
             var stockModel = await  _context.Stock.FirstOrDefaultAsync(x => x.Id == id);
