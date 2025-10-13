@@ -33,7 +33,7 @@ namespace Stock_Social_Platform.Controllers
         }
 
 
-        [HttpGet("{Id}")]
+        [HttpGet("{Id:int}")]
         public async Task<IActionResult> GetById([FromRoute] int Id)
         {
             var stock = await _stockRepo.GetByIdAsync(Id);
@@ -58,7 +58,7 @@ namespace Stock_Social_Platform.Controllers
         }
 
 
-        [HttpPut("{Id}")]
+        [HttpPut("{Id:int}")]
         public async Task<IActionResult> Update([FromRoute] int Id, [FromBody] UpdateStockRequestDto updateDto)
         {
             var stockModel = await _stockRepo.UpdateAsync(Id, updateDto);
@@ -69,7 +69,7 @@ namespace Stock_Social_Platform.Controllers
         }
 
 
-        [HttpDelete("{Id}")]
+        [HttpDelete("{Id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int Id)
         {
             var stockModel = await _stockRepo.DeleteSync(Id);
