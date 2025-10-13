@@ -12,7 +12,7 @@ namespace Stock_Social_Platform.Interfaces
         Task<List<Stock>> GetStocksAsync();
         Task<Stock?> GetByIdAsync(int id);
         Task<Stock> CreateAsync(Stock stockModel);
-        Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto updatekDto);
+        Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto updateDto);
         Task<Stock?> DeleteSync(int id);
         Task<bool> StockExists(int id);
     }

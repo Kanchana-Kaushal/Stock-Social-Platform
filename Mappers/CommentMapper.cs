@@ -31,5 +31,6 @@ namespace Stock_Social_Platform.Mappers
                 Content = commentDto.Content
             };
         }
+
     }
 }

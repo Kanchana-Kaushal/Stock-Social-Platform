@@ -12,5 +12,6 @@ namespace Stock_Social_Platform.Interfaces
         Task<List<Comment>> GetAllSync();
         Task<Comment?> GetByIdAsync(int id);
         Task<Comment> CreateAsync(Comment commentModel);
+        Task<Comment?> UpdateAsync(UpdateCommentDto updateCommentDto, int id);
     }
 }

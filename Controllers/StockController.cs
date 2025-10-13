@@ -16,12 +16,10 @@ namespace Stock_Social_Platform.Controllers
     [ApiController]
     public class StockController : ControllerBase
     {
-        private readonly ApplicationDBContext _context;
         private readonly IStockRepository _stockRepo;
-        public StockController(ApplicationDBContext context, IStockRepository stockRepo)
+        public StockController(IStockRepository stockRepo)
         {
             _stockRepo = stockRepo;
-            _context = context;
         }
 
         [HttpGet]
@@ -76,11 +74,12 @@ namespace Stock_Social_Platform.Controllers
         {
             var stockModel = await _stockRepo.DeleteSync(Id);
 
-            if (stockModel == null){ return NotFound("Cannot find record"); }
+            if (stockModel == null) { return NotFound("Cannot find record"); }
 
             return NoContent();
-            
-        }  
+
+        }
+    
     }
     
 }

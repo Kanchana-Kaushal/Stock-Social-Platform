@@ -37,5 +37,19 @@ namespace Stock_Social_Platform.Repository
         {
             return await _context.Comment.FirstOrDefaultAsync(c => c.Id == id);
         }
+
+        public async Task<Comment?> UpdateAsync(UpdateCommentDto updateCommentDto, int id)
+        {
+            var commentExists = await _context.Comment.FindAsync(id);
+
+            if (commentExists == null) return null;
+
+            commentExists.Content = updateCommentDto.Content;
+            commentExists.Title = updateCommentDto.Title;
+
+            await _context.SaveChangesAsync();
+
+            return commentExists;
+        }
     }
 }

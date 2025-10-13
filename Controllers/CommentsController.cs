@@ -58,8 +58,19 @@ namespace Stock_Social_Platform.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = savedComment.Id }, savedComment.ToCommentDto());
 
+        }       
+        
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentDto commentDto)
+        {
+            var updatedComment = await _commentRepo.UpdateAsync(commentDto, id);
+
+            if (updatedComment == null)
+            {
+                return NotFound("Comment does not exists");
+            }
+
+            return Ok(updatedComment.ToCommentDto());
         }
-        
-        
     }
 }
