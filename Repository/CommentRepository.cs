@@ -28,6 +28,18 @@ namespace Stock_Social_Platform.Repository
             return commentModel;
         }
 
+        public async Task<Comment?> DeleteAsync(int id)
+        {
+            var commentModel =await _context.Comment.FindAsync(id);
+
+            if (commentModel == null) return null;
+
+            _context.Comment.Remove(commentModel);
+            await _context.SaveChangesAsync();
+
+            return commentModel;
+        }
+
         public async Task<List<Comment>> GetAllSync()
         {
             return await _context.Comment.ToListAsync();

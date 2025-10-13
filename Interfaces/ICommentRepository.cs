@@ -13,5 +13,6 @@ namespace Stock_Social_Platform.Interfaces
         Task<Comment?> GetByIdAsync(int id);
         Task<Comment> CreateAsync(Comment commentModel);
         Task<Comment?> UpdateAsync(UpdateCommentDto updateCommentDto, int id);
+        Task<Comment?> DeleteAsync(int id);
     }
 }

@@ -58,8 +58,8 @@ namespace Stock_Social_Platform.Controllers
 
             return CreatedAtAction(nameof(GetById), new { id = savedComment.Id }, savedComment.ToCommentDto());
 
-        }       
-        
+        }
+
         [HttpPut("{id}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdateCommentDto commentDto)
         {
@@ -71,6 +71,20 @@ namespace Stock_Social_Platform.Controllers
             }
 
             return Ok(updatedComment.ToCommentDto());
+        }
+
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            var deletedComment =await _commentRepo.DeleteAsync(id);
+
+            if (deletedComment == null)
+            {
+                return NotFound("Cannot find comment");
+            }
+
+            return NoContent();
         }
     }
 }
