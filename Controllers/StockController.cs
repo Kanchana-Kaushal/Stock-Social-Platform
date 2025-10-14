@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Stock_Social_Platform.Data;
 using Stock_Social_Platform.Dtos.Stock;
+using Stock_Social_Platform.Helpers;
 using Stock_Social_Platform.Interfaces;
 using Stock_Social_Platform.Mappers;
 
@@ -23,9 +24,9 @@ namespace Stock_Social_Platform.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObject query)
         {
-            var stocks = await _stockRepo.GetStocksAsync();
+            var stocks = await _stockRepo.GetStocksAsync(query);
 
             var stockDto = stocks.Select(s => s.ToStockDto());
 
