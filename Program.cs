@@ -6,6 +6,7 @@ using Stock_Social_Platform.Data;
 using Stock_Social_Platform.Interfaces;
 using Stock_Social_Platform.Models;
 using Stock_Social_Platform.Repository;
+using Stock_Social_Platform.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,8 @@ builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
     options.Password.RequireUppercase = true;
     options.Password.RequireNonAlphanumeric = true;
     options.Password.RequiredLength = 12;
+
+    options.User.RequireUniqueEmail = true;
 
 }).AddEntityFrameworkStores<ApplicationDBContext>();
 
@@ -60,6 +63,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IStockRepository, StockRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
 
