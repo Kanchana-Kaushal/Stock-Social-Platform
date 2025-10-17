@@ -12,8 +12,8 @@ using Stock_Social_Platform.Data;
 namespace Stock_Social_Platform.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20251014114433_Identity")]
-    partial class Identity
+    [Migration("20251017133517_PortfolioManyToMany")]
+    partial class PortfolioManyToMany
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,6 +49,20 @@ namespace Stock_Social_Platform.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -250,6 +264,21 @@ namespace Stock_Social_Platform.Migrations
                     b.ToTable("Comment");
                 });
 
+            modelBuilder.Entity("Stock_Social_Platform.Models.Portfolio", b =>
+                {
+                    b.Property<string>("AppUserId")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StockId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("AppUserId", "StockId");
+
+                    b.HasIndex("StockId");
+
+                    b.ToTable("Portfolio");
+                });
+
             modelBuilder.Entity("Stock_Social_Platform.Models.Stock", b =>
                 {
                     b.Property<int>("Id")
@@ -344,9 +373,35 @@ namespace Stock_Social_Platform.Migrations
                     b.Navigation("Stock");
                 });
 
+            modelBuilder.Entity("Stock_Social_Platform.Models.Portfolio", b =>
+                {
+                    b.HasOne("Stock_Social_Platform.Models.AppUser", "AppUser")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Stock_Social_Platform.Models.Stock", "Stock")
+                        .WithMany("Portfolios")
+                        .HasForeignKey("StockId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Stock");
+                });
+
+            modelBuilder.Entity("Stock_Social_Platform.Models.AppUser", b =>
+                {
+                    b.Navigation("Portfolios");
+                });
+
             modelBuilder.Entity("Stock_Social_Platform.Models.Stock", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Portfolios");
                 });
 #pragma warning restore 612, 618
         }
