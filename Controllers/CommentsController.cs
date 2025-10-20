@@ -2,8 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stock_Social_Platform.Dtos.Comment;
+using Stock_Social_Platform.Extensions;
 using Stock_Social_Platform.Interfaces;
 using Stock_Social_Platform.Mappers;
 using Stock_Social_Platform.Models;
@@ -16,11 +19,13 @@ namespace Stock_Social_Platform.Controllers
     {
         private readonly ICommentRepository _commentRepo;
         private readonly IStockRepository _stockRepo;
+        private readonly UserManager<AppUser> _userManager;
 
-        public CommentsController(ICommentRepository commentRepo, IStockRepository stockRepo)
+        public CommentsController(ICommentRepository commentRepo, IStockRepository stockRepo, UserManager<AppUser> userManager)
         {
             _commentRepo = commentRepo;
             _stockRepo = stockRepo;
+            _userManager = userManager;
         }
 
         [HttpGet]
@@ -45,14 +50,20 @@ namespace Stock_Social_Platform.Controllers
         }
 
         [HttpPost("{stockId:int}")]
+        [Authorize]
         public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentDto commentDto)
         {
+            var username = User.GetUserName();
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            if (appUser == null) return NotFound("Cannot find user");
+
             if (!await _stockRepo.StockExists(stockId))
             {
                 return BadRequest("Stock does not exists");
             }
 
-            var commentModel = commentDto.ToCommentFromCreateDto(stockId);
+            var commentModel = commentDto.ToCommentFromCreateDto(stockId , appUser);
             var savedComment = await _commentRepo.CreateAsync(commentModel);
 
 
@@ -86,4 +97,4 @@ namespace Stock_Social_Platform.Controllers
             return NoContent();
         }
     }
-}
+} 

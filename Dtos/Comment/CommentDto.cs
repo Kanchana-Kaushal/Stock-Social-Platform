@@ -17,5 +17,7 @@ namespace Stock_Social_Platform.Dtos.Stock.Comment
 
         public DateTime CreatedOn { get; set; } = DateTime.Now;
 
+        public string CreatedBy { get; set; } = string.Empty;
+
     }
 }

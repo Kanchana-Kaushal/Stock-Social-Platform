@@ -17,7 +17,11 @@ namespace Stock_Social_Platform.Models
 
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
 
-        public Stock? Stock { get; set; } //This is the navigation property
+        public Stock? Stock { get; set; }
+
+        public string AppUserId { get; set; } = string.Empty;
+        
+        public AppUser? AppUser { get; set; }
 
     }
 }

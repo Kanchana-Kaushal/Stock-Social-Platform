@@ -42,14 +42,23 @@ namespace Stock_Social_Platform.Repository
             return stockModel;
         }
 
+        public async Task<Stock?> FindStockBySymbol(string symbol)
+        {
+            var stock = await _context.Stock.FirstOrDefaultAsync(s => s.Symbol == symbol);
+
+            if (stock == null) return null;
+
+            return stock;
+        }
+
         public async Task<Stock?> GetByIdAsync(int id)
         {
-            return await _context.Stock.Include(c => c.Comments).FirstOrDefaultAsync(i => i.Id == id);
+            return await _context.Stock.Include(c => c.Comments).ThenInclude(c => c.AppUser).FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<List<Stock>> GetStocksAsync(QueryObject query)
         {
-            var stocks = _context.Stock.Include(c => c.Comments).AsQueryable();
+            var stocks = _context.Stock.Include(c => c.Comments).ThenInclude(c => c.AppUser).AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(query.Symbol))
             {

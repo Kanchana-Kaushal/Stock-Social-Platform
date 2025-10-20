@@ -16,5 +16,6 @@ namespace Stock_Social_Platform.Interfaces
         Task<Stock?> UpdateAsync(int id, UpdateStockRequestDto updateDto);
         Task<Stock?> DeleteSync(int id);
         Task<bool> StockExists(int id);
+        Task<Stock?> FindStockBySymbol(string symbol);
     }
 }

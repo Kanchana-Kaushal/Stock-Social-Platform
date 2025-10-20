@@ -39,5 +39,71 @@ namespace Stock_Social_Platform.Controllers
 
             return Ok(userPortfolio);
         }
+
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> AddPortfolio(string symbol)
+        {
+            var username = User.GetUserName();
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            if (appUser == null) return NotFound("Cannot find user");
+
+            var stock = await _stockRepo.FindStockBySymbol(symbol);
+
+            if (stock == null) return NotFound("Cannot find stock");
+
+            var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser);
+
+            if (userPortfolio.Any(e => e.Symbol.Equals(symbol, StringComparison.CurrentCultureIgnoreCase)))
+            {
+                return BadRequest("Cannot add same stocks to the portfolio");
+            }
+
+            var portfolioModel = new Portfolio
+            {
+                AppUserId = appUser.Id,
+                StockId = stock.Id
+            };
+
+            var createdPorfolio = await _portfolioRepo.Create(portfolioModel);
+
+            return Created();
+
+        }
+
+
+        [HttpDelete]
+        [Authorize]
+        public async Task<IActionResult> DeletePortfolio(string symbol)
+        {
+            var username = User.GetUserName();
+            var appUser = await _userManager.FindByNameAsync(username);
+
+            if (appUser == null) return NotFound("Cannot find user");
+
+            var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser);
+
+            var stock = userPortfolio.FirstOrDefault(s => s.Symbol.ToLower() == symbol.ToLower());
+
+            if (stock == null) return NotFound("Cannot find stock from portfolio");
+
+            bool deleteStatus = await _portfolioRepo.Delete(appUser, symbol);
+
+            if (deleteStatus)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+
+        }
+
+
+
+        
     }
 }

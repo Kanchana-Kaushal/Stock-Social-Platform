@@ -42,12 +42,12 @@ namespace Stock_Social_Platform.Repository
 
         public async Task<List<Comment>> GetAllSync()
         {
-            return await _context.Comment.ToListAsync();
+            return await _context.Comment.Include(c => c.AppUser).ToListAsync();
         }
 
         public async Task<Comment?> GetByIdAsync(int id)
         {
-            return await _context.Comment.FirstOrDefaultAsync(c => c.Id == id);
+            return await _context.Comment.Include(c => c.AppUser).FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Comment?> UpdateAsync(UpdateCommentDto updateCommentDto, int id)

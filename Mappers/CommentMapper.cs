@@ -18,17 +18,19 @@ namespace Stock_Social_Platform.Mappers
                 Title = commentModel.Title,
                 StockId = commentModel.StockId,
                 Content = commentModel.Content,
-                CreatedOn = commentModel.CreatedOn
+                CreatedOn = commentModel.CreatedOn,
+                CreatedBy = commentModel.AppUser.UserName,
             };
         }
 
-        public static Comment ToCommentFromCreateDto(this CreateCommentDto commentDto, int stockId)
+        public static Comment ToCommentFromCreateDto(this CreateCommentDto commentDto, int stockId, AppUser appUser)
         {
             return new Comment
             {
                 StockId = stockId,
                 Title = commentDto.Title,
-                Content = commentDto.Content
+                Content = commentDto.Content,
+                AppUserId = appUser.Id
             };
         }
 
