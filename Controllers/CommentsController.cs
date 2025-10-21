@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Stock_Social_Platform.Dtos.Comment;
 using Stock_Social_Platform.Extensions;
+using Stock_Social_Platform.Helpers;
 using Stock_Social_Platform.Interfaces;
 using Stock_Social_Platform.Mappers;
 using Stock_Social_Platform.Models;
@@ -20,18 +21,20 @@ namespace Stock_Social_Platform.Controllers
         private readonly ICommentRepository _commentRepo;
         private readonly IStockRepository _stockRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IFMPService _fmpService;
 
-        public CommentsController(ICommentRepository commentRepo, IStockRepository stockRepo, UserManager<AppUser> userManager)
+        public CommentsController(ICommentRepository commentRepo, IStockRepository stockRepo, UserManager<AppUser> userManager, IFMPService fMPService)
         {
             _commentRepo = commentRepo;
             _stockRepo = stockRepo;
             _userManager = userManager;
+            _fmpService = fMPService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] QueryObjectComments queryObject)
         {
-            var comments = await _commentRepo.GetAllSync();
+            var comments = await _commentRepo.GetAllSync(queryObject);
             var commentsDto = comments.Select(x => x.ToCommentDto());
             return Ok(commentsDto);
         }
@@ -49,21 +52,31 @@ namespace Stock_Social_Platform.Controllers
             return Ok(comment.ToCommentDto());
         }
 
-        [HttpPost("{stockId:int}")]
+        [HttpPost("{symbol:alpha}")]
         [Authorize]
-        public async Task<IActionResult> Create([FromRoute] int stockId, [FromBody] CreateCommentDto commentDto)
+        public async Task<IActionResult> Create([FromRoute] string symbol, [FromBody] CreateCommentDto commentDto)
         {
             var username = User.GetUserName();
             var appUser = await _userManager.FindByNameAsync(username);
 
             if (appUser == null) return NotFound("Cannot find user");
 
-            if (!await _stockRepo.StockExists(stockId))
+            var stock = await _stockRepo.FindStockBySymbol(symbol);
+
+            if(stock == null)
             {
-                return BadRequest("Stock does not exists");
+                stock = await _fmpService.FindStockBySymbolAsync(symbol);
+                if (stock == null)
+                {
+                    return BadRequest("This stock does not exists");
+                }
+                else
+                {
+                    await _stockRepo.CreateAsync(stock);
+                }
             }
 
-            var commentModel = commentDto.ToCommentFromCreateDto(stockId , appUser);
+            var commentModel = commentDto.ToCommentFromCreateDto(stock.Id , appUser);
             var savedComment = await _commentRepo.CreateAsync(commentModel);
 
 

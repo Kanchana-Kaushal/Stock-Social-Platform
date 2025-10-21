@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Stock_Social_Platform</RootNamespace>
+    <UserSecretsId>1630cf9a-fd1b-4d6b-aedf-fb285e31d3cd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

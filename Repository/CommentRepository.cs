@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Stock_Social_Platform.Data;
 using Stock_Social_Platform.Dtos.Comment;
+using Stock_Social_Platform.Helpers;
 using Stock_Social_Platform.Interfaces;
 using Stock_Social_Platform.Mappers;
 using Stock_Social_Platform.Models;
@@ -40,9 +41,24 @@ namespace Stock_Social_Platform.Repository
             return commentModel;
         }
 
-        public async Task<List<Comment>> GetAllSync()
+        public async Task<List<Comment>> GetAllSync(QueryObjectComments query)
         {
-            return await _context.Comment.Include(c => c.AppUser).ToListAsync();
+            var comments = _context.Comment.Include(c => c.AppUser).Include(c => c.Stock).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(query.Symbol))
+            {
+                comments = comments.Where(c => c.Stock != null && c.Stock.Symbol.ToLower().Contains(query.Symbol.ToLower()));
+            }
+
+            if (!string.IsNullOrWhiteSpace(query.SortBy) && query.SortBy == "Date")
+            {
+                comments = query.IsDecending ? comments.OrderByDescending(c => c.CreatedOn) : comments.OrderBy(c => c.CreatedOn);
+            }
+
+
+            int skip = (query.PageNumber - 1) * query.PageSize;
+
+            return await comments.Skip(skip).Take(query.PageSize).ToListAsync();
         }
 
         public async Task<Comment?> GetByIdAsync(int id)

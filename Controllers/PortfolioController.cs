@@ -18,11 +18,14 @@ namespace Stock_Social_Platform.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly IStockRepository _stockRepo;
         private readonly IPortfolioRepository _portfolioRepo;
-        public PortfolioController(IStockRepository stockRepo, UserManager<AppUser> userManager, IPortfolioRepository portfolioRepository)
+        private readonly IFMPService _fmpService;
+
+        public PortfolioController(IStockRepository stockRepo, UserManager<AppUser> userManager, IPortfolioRepository portfolioRepository, IFMPService fMPService)
         {
             _stockRepo = stockRepo;
             _userManager = userManager;
             _portfolioRepo = portfolioRepository;
+            _fmpService = fMPService;
         }
 
 
@@ -43,7 +46,7 @@ namespace Stock_Social_Platform.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> AddPortfolio(string symbol)
+        public async Task<IActionResult> AddPortfolio([FromBody] string symbol)
         {
             var username = User.GetUserName();
             var appUser = await _userManager.FindByNameAsync(username);
@@ -52,7 +55,18 @@ namespace Stock_Social_Platform.Controllers
 
             var stock = await _stockRepo.FindStockBySymbol(symbol);
 
-            if (stock == null) return NotFound("Cannot find stock");
+            if(stock == null)
+            {
+                stock = await _fmpService.FindStockBySymbolAsync(symbol);
+                if (stock == null)
+                {
+                    return BadRequest("This stock does not exists");
+                }
+                else
+                {
+                    await _stockRepo.CreateAsync(stock);
+                }
+            }
 
             var userPortfolio = await _portfolioRepo.GetUserPortfolio(appUser);
 
